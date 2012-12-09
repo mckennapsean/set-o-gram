@@ -33,6 +33,18 @@ int barW;
 int barY = graphY + graphH;
 int barMax = 0;
 
+// set colors
+color[] setColors;
+color[] colors;
+color c0 = color(255, 121, 121);
+color c1 = color(121, 121, 255);
+color c2 = color(121, 255, 121);
+color c3 = color(121, 121, 188);
+color c4 = color(255, 188, 143);
+color c5 = color(255, 255, 121);
+color c6 = color(188, 148, 121);
+color c7 = color(255, 121, 255);
+
 // font data
 PFont titleFont;
 PFont dataFont;
@@ -115,6 +127,22 @@ void setup(){
     }
   }
   
+  // set up color storage
+  colors = new color[8];
+  colors[0] = c1;
+  colors[1] = c2;
+  colors[2] = c3;
+  colors[3] = c4;
+  colors[4] = c5;
+  colors[5] = c6;
+  colors[6] = c7;
+  colors[7] = c0;
+  setColors = new color[setCount];
+  for(int i = 0; i < setCount; i++){
+    int col = i % 8;
+    setColors[i] = colors[col];
+  }
+  
   // set fonts
   titleFont = createFont("Verdana", 20);
   dataFont = createFont("Georgia", 20);
@@ -132,7 +160,7 @@ void draw(){
     strokeWeight(1);
     for(int j = 0; j < setCount; j++)
       rect(graphX + (barS * (i + 1)) + (barW * i) + barW * j / setCount, graphY + graphH, barW / setCount, - (float) setCounts[i] / barMax * graphH);
-    fill(0);
+    fill(setColors[i]);
     float prevY = 0;
     float nextY;
     for(int j = 0; j < setCount; j++){
@@ -143,6 +171,7 @@ void draw(){
   }
   
   // draw bar graph lines
+  fill(0);
   stroke(0);
   line(graphX, graphY + graphH, graphX + graphW, graphY + graphH);
   line(graphX, graphY, graphX, graphY + graphH);
