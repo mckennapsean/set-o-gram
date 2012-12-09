@@ -13,6 +13,7 @@ String fileLocation = "";
 String[] sets;
 int setCount;
 int[] setCounts;
+int[][] setFreq;
 String[] members;
 int memberCount;
 int[][] setMembership;
@@ -78,11 +79,34 @@ void setup(){
         setCounts[j] = 0;
       if(setMembership[i][j] > 0 && !sets[j].equals("class"))
         setCounts[j] += 1;
-      else if(setMembership[i][j] > 1 && sets[j].equals("class"))
+      else if(setMembership[i][j] < 2 && sets[j].equals("class"))
         setCounts[j] += 1;
       if(i == memberCount - 1)
         if(setCounts[j] > barMax)
           barMax = setCounts[j];
+    }
+  }
+  
+  // determine frequency counts among sets
+  setFreq = new int[setCount][setCount];
+  for(int i = 0; i < setCount; i++){
+    // store frequency count
+    for(int j = 0; j < memberCount; j++){
+      // determine frequency
+      int freq = 0;
+      for(int k = 0; k < setCount; k++){
+        // set initial frequency count to zero
+        if(j == 0)
+          setFreq[i][k] = 0;
+        if(setMembership[j][k] > 0 && !sets[k].equals("class"))
+          freq += 1;
+        else if(setMembership[j][k] < 2 && sets[k].equals("class"))
+          freq += 1;
+      }
+      if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals("class"))
+        setFreq[i][freq - 1] += 1;
+      else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
+        setFreq[i][freq - 1] += 1;
     }
   }
 }
