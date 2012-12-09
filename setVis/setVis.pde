@@ -121,8 +121,16 @@ void draw(){
   line(graphX, graphY, graphX, graphY + graphH);
   
   // draw bar graph
-  fill(0);
   for(int i = 0; i < setCount; i++){
+    fill(0, 0, 0, 50);
     rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH, barW, - (float) setCounts[i] / barMax * graphH);
+    fill(0);
+    float prevY = 0;
+    float nextY;
+    for(int j = 0; j < setCount; j++){
+      nextY = -(float) setFreq[i][j] / barMax * graphH;
+      rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * 1.0 / (j + 1), nextY);
+      prevY += nextY;
+    }
   }
 }
