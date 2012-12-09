@@ -125,7 +125,25 @@ void draw(){
   // wipe background each time
   background(bg);
   
+  // draw bar graph
+  for(int i = 0; i < setCount; i++){
+    fill(0, 0, 0, 75);
+    stroke(255);
+    strokeWeight(1);
+    for(int j = 0; j < setCount; j++)
+      rect(graphX + (barS * (i + 1)) + (barW * i) + barW * j / setCount, graphY + graphH, barW / setCount, - (float) setCounts[i] / barMax * graphH);
+    fill(0);
+    float prevY = 0;
+    float nextY;
+    for(int j = 0; j < setCount; j++){
+      nextY = -(float) setFreq[i][j] / barMax * graphH;
+      rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * (setCount - j) / setCount, nextY);
+      prevY += nextY;
+    }
+  }
+  
   // draw bar graph lines
+  stroke(0);
   line(graphX, graphY + graphH, graphX + graphW, graphY + graphH);
   line(graphX, graphY, graphX, graphY + graphH);
   
@@ -155,18 +173,4 @@ void draw(){
   textAlign(CENTER, BOTTOM);
   text("0", graphX - 25, graphY + graphH);
   line(graphX - 10, graphY + graphH, graphX, graphY + graphH);
-  
-  // draw bar graph
-  for(int i = 0; i < setCount; i++){
-    fill(0, 0, 0, 50);
-    rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH, barW, - (float) setCounts[i] / barMax * graphH);
-    fill(0);
-    float prevY = 0;
-    float nextY;
-    for(int j = 0; j < setCount; j++){
-      nextY = -(float) setFreq[i][j] / barMax * graphH;
-      rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * 1.0 / (j + 1), nextY);
-      prevY += nextY;
-    }
-  }
 }
