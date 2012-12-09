@@ -33,6 +33,10 @@ int barW;
 int barY = graphY + graphH;
 int barMax = 0;
 
+// font data
+PFont titleFont;
+PFont dataFont;
+
 // initial setup
 void setup(){
   size(w, h, P2D);
@@ -103,12 +107,17 @@ void setup(){
         else if(setMembership[j][k] < 2 && sets[k].equals("class"))
           freq += 1;
       }
+      // add to frequency count
       if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals("class"))
         setFreq[i][freq - 1] += 1;
       else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
         setFreq[i][freq - 1] += 1;
     }
   }
+  
+  // set fonts
+  titleFont = createFont("Verdana", 20);
+  dataFont = createFont("Georgia", 20);
 }
 
 // begin draw cycle
@@ -119,6 +128,33 @@ void draw(){
   // draw bar graph lines
   line(graphX, graphY + graphH, graphX + graphW, graphY + graphH);
   line(graphX, graphY, graphX, graphY + graphH);
+  
+  // draw titles
+  textFont(titleFont);
+  textAlign(CENTER);
+  String title = split(dataFile, ".")[0];
+  text(title, w / 2, graphY - 50);
+  textSize(12);
+  String yAxisTitle = "members";
+  pushMatrix();
+  translate(graphX / 2, graphY + graphH / 2);
+  rotate(-HALF_PI);
+  text(yAxisTitle, 0, 0);
+  popMatrix();
+  for(int i = 0; i < setCount; i++)
+    text(sets[i], graphX + (barS * (i + 1)) + (barW * i) + barW / 2, graphY + graphH + 50);
+  
+  // draw data marks
+  textFont(dataFont);
+  textSize(12);
+  stroke(75);
+  strokeWeight(1);
+  textAlign(CENTER, TOP);
+  text(barMax, graphX - 25, graphY);
+  line(graphX - 10, graphY, graphX, graphY);
+  textAlign(CENTER, BOTTOM);
+  text("0", graphX - 25, graphY + graphH);
+  line(graphX - 10, graphY + graphH, graphX, graphY + graphH);
   
   // draw bar graph
   for(int i = 0; i < setCount; i++){
