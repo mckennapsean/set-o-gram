@@ -162,15 +162,6 @@ void setup(){
   colorsl[6] = c7l;
   colorsl[7] = c0l;
   setColors = new color[setCount][setCount];
-  for(int i = 0; i < setCount; i++){
-    for(int j = 0; j < setCount; j++){
-      int col = i % 8;
-      if(selected[i][j])
-        setColors[i][j] = colors[col];
-      else
-        setColors[i][j] = colorsl[col];
-    }
-  }
   
   // set fonts
   titleFont = createFont("Verdana", 20);
@@ -181,6 +172,17 @@ void setup(){
 void draw(){
   // wipe background each time
   background(bg);
+  
+  // create proper selection colors
+  for(int i = 0; i < setCount; i++){
+    for(int j = 0; j < setCount; j++){
+      int col = i % 8;
+      if(selected[i][j])
+        setColors[i][j] = colors[col];
+      else
+        setColors[i][j] = colorsl[col];
+    }
+  }
   
   // draw bar graph
   for(int i = 0; i < setCount; i++){
@@ -239,7 +241,6 @@ void draw(){
 
 // on hover over items
 void onHover(){
-  
   // hovering over sets
   if(mouseY > (graphY + graphH)){
     for(int i = 0; i < setCount; i++){
@@ -274,4 +275,47 @@ void overlayText(int value, int x, int y){
   fill(0);
   stroke(255);
   text(value, x - 5, y);
+}
+
+// when selecting items
+void mouseClicked(){
+  // selecting sets (turn all on or all off)
+  if(mouseY > (graphY + graphH)){
+    for(int i = 0; i < setCount; i++){
+      int barX = graphX + (barS * (i + 1)) + (barW * i);
+      if(mouseX > barX && mouseX < (barX + barW)){
+        int numSelected = 0;
+        for(int j = 0; j < setCount; j++){
+          if(selected[i][j])
+            numSelected += 1;
+        }
+        for(int j = 0; j < setCount; j++){
+          if(numSelected < setCount)
+            selected[i][j] = true;
+          else
+            selected[i][j] = false;
+        }
+      }
+    }
+  
+  // selecting blocks / permutations
+  }else if(mouseY > graphY && mouseY < (graphY + graphH)){
+    for(int i = 0; i < setCount; i++){
+      int barX = graphX + (barS * (i + 1)) + (barW * i);
+      if(mouseX > barX && mouseX < (barX + barW)){
+        float prevY = 0;
+        float nextY;
+        for(int j = 0; j < setCount; j++){
+          nextY = -(float) setFreq[i][j] / barMax * graphH;
+          if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY)){
+            if(selected[i][j])
+              selected[i][j] = false;
+            else
+              selected[i][j] = true;
+          }
+          prevY += nextY;
+        }
+      }
+    }
+  }
 }
