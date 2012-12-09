@@ -28,7 +28,7 @@ int graphX = 100;
 int graphY = 100;
 int graphW = w - graphX * 2;
 int graphH = h - graphY * 2;
-int barS = 5;
+int barS = 25;
 int barW;
 int barY = graphY + graphH;
 int barMax = 0;
@@ -115,4 +115,14 @@ void setup(){
 void draw(){
   // wipe background each time
   background(bg);
+  
+  // draw bar graph lines
+  line(graphX, graphY + graphH, graphX + graphW, graphY + graphH);
+  line(graphX, graphY, graphX, graphY + graphH);
+  
+  // draw bar graph
+  fill(0);
+  for(int i = 0; i < setCount; i++){
+    rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH, barW, - (float) setCounts[i] / barMax * graphH);
+  }
 }
