@@ -12,6 +12,7 @@ String fileLocation = "";
 // data variables
 String[] sets;
 int setCount;
+int[] setCounts;
 String[] members;
 int memberCount;
 int[][] setMembership;
@@ -20,6 +21,16 @@ int[][] setMembership;
 int w = 800;
 int h = 600;
 color bg = color(255, 255, 255, 0);
+
+// position and size of graph
+int graphX = 100;
+int graphY = 100;
+int graphW = w - graphX * 2;
+int graphH = h - graphY * 2;
+int barS = 5;
+int barW;
+int barY = graphY + graphH;
+int barMax = 0;
 
 // initial setup
 void setup(){
@@ -38,6 +49,7 @@ void setup(){
     if(i == 0){
       setCount = pieces.length - 1;
       sets = new String[setCount];
+      setCounts = new int[setCount];
       setMembership = new int[memberCount][setCount];
       for(int j = 0; j < pieces.length; j++){
         if(j != 0){
@@ -53,6 +65,24 @@ void setup(){
       for(int j = 0; j < pieces.length; j++)
         if(j != 0)
           setMembership[i - 1][j - 1] = int(pieces[j]);
+    }
+  }
+  
+  // set bar width
+  barW = (graphW - (barS * (setCount + 1))) / setCount;
+  
+  // count the total number of elements in each set, store max
+  for(int i = 0; i < memberCount; i++){
+    for(int j = 0; j < setCount; j++){
+      if(i == 0)
+        setCounts[j] = 0;
+      if(setMembership[i][j] > 0 && !sets[j].equals("class"))
+        setCounts[j] += 1;
+      else if(setMembership[i][j] > 1 && sets[j].equals("class"))
+        setCounts[j] += 1;
+      if(i == memberCount - 1)
+        if(setCounts[j] > barMax)
+          barMax = setCounts[j];
     }
   }
 }
