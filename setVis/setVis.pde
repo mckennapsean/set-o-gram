@@ -20,7 +20,7 @@ int[][] setMembership;
 
 // size and color of screen
 int w = 800;
-int h = 600;
+int h = 400;
 color bg = color(255, 255, 255, 0);
 
 // position and size of graph
