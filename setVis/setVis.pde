@@ -233,7 +233,8 @@ void draw(){
   line(graphX - 10, graphY + graphH, graphX, graphY + graphH);
   
   // hover over items
-  onHover();
+  if(pmouseX == mouseX && pmouseY == mouseY)
+    onHover();
 }
 
 // on hover over items
