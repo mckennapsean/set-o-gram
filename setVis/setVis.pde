@@ -18,6 +18,9 @@ String[] members;
 int memberCount;
 int[][] setMembership;
 
+// mark which permutations are selected or highlighted
+boolean[][] selected;
+
 // size and color of screen
 int w = 800;
 int h = 400;
@@ -34,8 +37,9 @@ int barY = graphY + graphH;
 int barMax = 0;
 
 // set colors
-color[] setColors;
+color[][] setColors;
 color[] colors;
+color[] colorsl;
 color c0 = color(255, 121, 121);
 color c1 = color(121, 121, 255);
 color c2 = color(121, 255, 121);
@@ -44,6 +48,14 @@ color c4 = color(255, 188, 143);
 color c5 = color(255, 255, 121);
 color c6 = color(188, 148, 121);
 color c7 = color(255, 121, 255);
+color c0l = color(255, 180, 180);
+color c1l = color(180, 180, 255);
+color c2l = color(180, 255, 180);
+color c3l = color(180, 180, 220);
+color c4l = color(255, 220, 200);
+color c5l = color(255, 255, 180);
+color c6l = color(220, 200, 180);
+color c7l = color(255, 180, 255);
 
 // font data
 PFont titleFont;
@@ -105,12 +117,15 @@ void setup(){
   
   // determine frequency counts among sets
   setFreq = new int[setCount][setCount];
+  selected = new boolean[setCount][setCount];
   for(int i = 0; i < setCount; i++){
     // store frequency count
     for(int j = 0; j < memberCount; j++){
       // determine frequency
       int freq = 0;
       for(int k = 0; k < setCount; k++){
+        // create initial selection
+        selected[i][k] = false;
         // set initial frequency count to zero
         if(j == 0)
           setFreq[i][k] = 0;
@@ -137,10 +152,24 @@ void setup(){
   colors[5] = c6;
   colors[6] = c7;
   colors[7] = c0;
-  setColors = new color[setCount];
+  colorsl = new color[8];
+  colorsl[0] = c1l;
+  colorsl[1] = c2l;
+  colorsl[2] = c3l;
+  colorsl[3] = c4l;
+  colorsl[4] = c5l;
+  colorsl[5] = c6l;
+  colorsl[6] = c7l;
+  colorsl[7] = c0l;
+  setColors = new color[setCount][setCount];
   for(int i = 0; i < setCount; i++){
-    int col = i % 8;
-    setColors[i] = colors[col];
+    for(int j = 0; j < setCount; j++){
+      int col = i % 8;
+      if(selected[i][j])
+        setColors[i][j] = colors[col];
+      else
+        setColors[i][j] = colorsl[col];
+    }
   }
   
   // set fonts
@@ -160,10 +189,10 @@ void draw(){
     strokeWeight(1);
     for(int j = 0; j < setCount; j++)
       rect(graphX + (barS * (i + 1)) + (barW * i) + barW * j / setCount, graphY + graphH, barW / setCount, - (float) setCounts[i] / barMax * graphH);
-    fill(setColors[i]);
     float prevY = 0;
     float nextY;
     for(int j = 0; j < setCount; j++){
+      fill(setColors[i][j]);
       nextY = -(float) setFreq[i][j] / barMax * graphH;
       rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * (setCount - j) / setCount, nextY);
       prevY += nextY;
@@ -202,4 +231,46 @@ void draw(){
   textAlign(CENTER, BOTTOM);
   text("0", graphX - 25, graphY + graphH);
   line(graphX - 10, graphY + graphH, graphX, graphY + graphH);
+  
+  // hover over items
+  onHover();
+}
+
+// on hover over items
+void onHover(){
+  
+  // hovering over sets
+  if(mouseY > (graphY + graphH)){
+    for(int i = 0; i < setCount; i++){
+      int barX = graphX + (barS * (i + 1)) + (barW * i);
+      if(mouseX > barX && mouseX < (barX + barW))
+        overlayText(setCounts[i], mouseX, mouseY);
+    }
+  
+  // hovering over blocks / permutations
+  }else if(mouseY > graphY && mouseY < (graphY + graphH)){
+    for(int i = 0; i < setCount; i++){
+      int barX = graphX + (barS * (i + 1)) + (barW * i);
+      if(mouseX > barX && mouseX < (barX + barW)){
+        float prevY = 0;
+        float nextY;
+        for(int j = 0; j < setCount; j++){
+          nextY = -(float) setFreq[i][j] / barMax * graphH;
+          if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY))
+            overlayText(setFreq[i][j], mouseX, mouseY);
+          prevY += nextY;
+        }
+      }
+    }
+  }
+}
+
+// overlay text at cursor (tooltip)
+void overlayText(int value, int x, int y){
+  textFont(dataFont);
+  textAlign(RIGHT, CENTER);
+  textSize(12);
+  fill(0);
+  stroke(255);
+  text(value, x - 5, y);
 }
