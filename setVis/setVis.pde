@@ -21,7 +21,6 @@ int[] setCounts;
 int[][] setFreq;
 int[][][] setFreqOverlap;
 
-
 // mark which permutations are selected or highlighted
 boolean[][] selected;
 
@@ -148,9 +147,9 @@ void setup(){
       for(int k = 0; k < setCount; k++){
         if(j == 0)
           setFreqOverlap[i][freq - 1][k] = 0;
-        if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals("class"))
+        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class") && !sets[i].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
+        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class") && sets[i].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
       }
     }
@@ -270,11 +269,29 @@ void onHover(){
       if(mouseX > barX && mouseX < (barX + barW)){
         float prevY = 0;
         float nextY;
+        int hover = 0;
         for(int j = 0; j < setCount; j++){
           nextY = -(float) setFreq[i][j] / barMax * graphH;
-          if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY))
+          if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY)){
             overlayText(setFreq[i][j], mouseX, mouseY);
+            hover = j;
+          }
           prevY += nextY;
+        }
+        // also color linked frequency count sets
+        stroke(255);
+        strokeWeight(1);
+        for(int j = 0; j < setCount; j++){
+          int col = j % 8;
+          fill(colors[col]);
+          prevY = 0;
+          for(int k = 0; k < setCount; k++){
+            nextY = -(float) setFreq[j][k] / barMax * graphH;
+            float cnt = -(float) setFreqOverlap[i][k][j] / barMax * graphH;
+            if(k == hover && i != j)
+              rect(graphX + (barS * (j + 1)) + (barW * j), graphY + graphH + prevY, barW * (setCount - hover) / setCount, cnt);
+            prevY += nextY;
+          }
         }
       }
     }
