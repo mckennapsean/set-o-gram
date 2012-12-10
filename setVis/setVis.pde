@@ -47,6 +47,10 @@ int barS = 25;
 int barW;
 int barY = graphY + graphH;
 int barMax = 0;
+int barMaxRelative;
+
+// whether to display bars in relative mode
+boolean relative = false;
 
 // set colors
 color[][] setColors;
@@ -212,20 +216,24 @@ void draw(){
     fill(0, 0, 0, 35);
     stroke(255);
     strokeWeight(1);
+    if(relative)
+      barMaxRelative = setCounts[i];
+    else
+      barMaxRelative = barMax;
     for(int j = 0; j < setCount; j++)
-      rect(graphX + (barS * (i + 1)) + (barW * i) + barW * j / setCount, graphY + graphH, barW / setCount, - (float) setCounts[i] / barMax * graphH);
+      rect(graphX + (barS * (i + 1)) + (barW * i) + barW * j / setCount, graphY + graphH, barW / setCount, - (float) setCounts[i] / barMaxRelative * graphH);
     float prevY = 0;
     float nextY;
     for(int j = 0; j < setCount; j++){
       fill(setColors[i][j]);
-      nextY = -(float) setFreq[i][j] / barMax * graphH;
+      nextY = -(float) setFreq[i][j] / barMaxRelative * graphH;
       rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * (setCount - j) / setCount, nextY);
       if(!selected[i][j]){
         for(int k = 0; k < setCount; k++){
           if(selected[k][j]){
             int col = i % 8;
             fill(colors[col]);
-            float cnt = -(float) setFreqOverlap[k][j][i] / barMax * graphH;
+            float cnt = -(float) setFreqOverlap[k][j][i] / barMaxRelative * graphH;
             rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW *(setCount - j) / setCount, cnt);
           }
         }
@@ -261,7 +269,10 @@ void draw(){
   stroke(75);
   strokeWeight(1);
   textAlign(CENTER, TOP);
-  text(barMax, graphX - 25, graphY);
+  if(relative)
+    text("100%", graphX - 25, graphY);
+  else
+    text(barMax, graphX - 25, graphY);
   line(graphX - 10, graphY, graphX, graphY);
   textAlign(CENTER, BOTTOM);
   text("0", graphX - 25, graphY + graphH);
@@ -290,8 +301,12 @@ void onHover(){
         float prevY = 0;
         float nextY;
         int hover = 0;
+        if(relative)
+          barMaxRelative = setCounts[i];
+        else
+          barMaxRelative = barMax;
         for(int j = 0; j < setCount; j++){
-          nextY = -(float) setFreq[i][j] / barMax * graphH;
+          nextY = -(float) setFreq[i][j] / barMaxRelative * graphH;
           if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY)){
             overlayText(setFreq[i][j], mouseX, mouseY);
             hover = j;
@@ -305,9 +320,13 @@ void onHover(){
           int col = j % 8;
           fill(colors[col]);
           prevY = 0;
+          if(relative)
+            barMaxRelative = setCounts[j];
+          else
+            barMaxRelative = barMax;
           for(int k = 0; k < setCount; k++){
-            nextY = -(float) setFreq[j][k] / barMax * graphH;
-            float cnt = -(float) setFreqOverlap[i][k][j] / barMax * graphH;
+            nextY = -(float) setFreq[j][k] / barMaxRelative * graphH;
+            float cnt = -(float) setFreqOverlap[i][k][j] / barMaxRelative * graphH;
             if(k == hover && i != j)
               rect(graphX + (barS * (j + 1)) + (barW * j), graphY + graphH + prevY, barW * (setCount - hover) / setCount, cnt);
             prevY += nextY;
@@ -356,8 +375,12 @@ void mouseClicked(){
       if(mouseX > barX && mouseX < (barX + barW)){
         float prevY = 0;
         float nextY;
+        if(relative)
+          barMaxRelative = setCounts[i];
+        else
+          barMaxRelative = barMax;
         for(int j = 0; j < setCount; j++){
-          nextY = -(float) setFreq[i][j] / barMax * graphH;
+          nextY = -(float) setFreq[i][j] / barMaxRelative * graphH;
           if(mouseY < (graphY + graphH + prevY) && mouseY > (graphY + graphH + prevY + nextY)){
             if(selected[i][j])
               selected[i][j] = false;
@@ -368,5 +391,23 @@ void mouseClicked(){
         }
       }
     }
+  
+  // selecting y-axis, toggle relative mode
+    if(mouseX < graphX){
+      if(relative)
+        relative = false;
+      else
+        relative = true;
+    }
+  }
+}
+
+// when toggling the relative mode on or off
+void keyTyped(){
+  if(int(key) == 114 || int(key) == 82){
+    if(relative)
+      relative = false;
+    else
+      relative = true;
   }
 }
