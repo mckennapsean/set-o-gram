@@ -4,6 +4,15 @@
 // original paper:
 //   Interactive Visual Analysis of Set-Typed Data
 // 
+// known bugs:
+//   fixed color per set
+//   overlapping permutations
+//   issues with hover-over permutation highlighting
+//   cannot select individual permutations, only highlighted 
+//   problem with the "class" set in titanic dataset, clicking the set has problems
+//   need to clean titanic data for better set labels
+//   need to clean and anonymize gene data before adding
+// 
 
 // data file
 String dataFile = "titanic.csv";
