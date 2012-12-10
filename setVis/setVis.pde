@@ -9,14 +9,18 @@
 String dataFile = "titanic.csv";
 String fileLocation = "";
 
-// data variables
+// raw data variables
 String[] sets;
 int setCount;
-int[] setCounts;
-int[][] setFreq;
 String[] members;
 int memberCount;
 int[][] setMembership;
+
+// derived data variables
+int[] setCounts;
+int[][] setFreq;
+int[][][] setFreqOverlap;
+
 
 // mark which permutations are selected or highlighted
 boolean[][] selected;
@@ -117,6 +121,7 @@ void setup(){
   
   // determine frequency counts among sets
   setFreq = new int[setCount][setCount];
+  setFreqOverlap = new int[setCount][setCount][setCount];
   selected = new boolean[setCount][setCount];
   for(int i = 0; i < setCount; i++){
     // store frequency count
@@ -139,6 +144,15 @@ void setup(){
         setFreq[i][freq - 1] += 1;
       else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
         setFreq[i][freq - 1] += 1;
+      // associate this count to a specific set
+      for(int k = 0; k < setCount; k++){
+        if(j == 0)
+          setFreqOverlap[i][freq - 1][k] = 0;
+        if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals("class"))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
+          setFreqOverlap[i][freq - 1][k] += 1;
+      }
     }
   }
   
