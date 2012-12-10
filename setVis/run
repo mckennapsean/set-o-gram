@@ -1,3 +1,3 @@
 #!/bin/sh
 
-./../../../../Apps/processing-2.0b6/processing-java --sketch=/home/sean/Code/Courses/Visualization/setVis --output=/tmp/setVis-temp --force --run
+./../../../../Apps/processing-2.0b7/processing-java --sketch=/home/sean/Code/Courses/Visualization/setVis --output=/tmp/setVis-temp --force --run
