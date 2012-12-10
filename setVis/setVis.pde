@@ -146,7 +146,8 @@ void setup(){
       // associate this count to a specific set
       for(int k = 0; k < setCount; k++){
         if(j == 0)
-          setFreqOverlap[i][freq - 1][k] = 0;
+          for(int l = 0; l < setCount; l++)
+            setFreqOverlap[i][l][k] = 0;
         if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
         else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class"))
@@ -199,7 +200,7 @@ void draw(){
   
   // draw bar graph
   for(int i = 0; i < setCount; i++){
-    fill(0, 0, 0, 75);
+    fill(0, 0, 0, 35);
     stroke(255);
     strokeWeight(1);
     for(int j = 0; j < setCount; j++)
@@ -210,6 +211,16 @@ void draw(){
       fill(setColors[i][j]);
       nextY = -(float) setFreq[i][j] / barMax * graphH;
       rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW * (setCount - j) / setCount, nextY);
+      if(!selected[i][j]){
+        for(int k = 0; k < setCount; k++){
+          if(selected[k][j]){
+            int col = i % 8;
+            fill(colors[col]);
+            float cnt = -(float) setFreqOverlap[k][j][i] / barMax * graphH;
+            rect(graphX + (barS * (i + 1)) + (barW * i), graphY + graphH + prevY, barW *(setCount - j) / setCount, cnt);
+          }
+        }
+      }
       prevY += nextY;
     }
   }
