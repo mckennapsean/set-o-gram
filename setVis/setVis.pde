@@ -147,9 +147,9 @@ void setup(){
       for(int k = 0; k < setCount; k++){
         if(j == 0)
           setFreqOverlap[i][freq - 1][k] = 0;
-        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class") && !sets[i].equals("class"))
+        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class") && sets[i].equals("class"))
+        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
       }
     }
