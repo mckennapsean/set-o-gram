@@ -77,6 +77,11 @@ color c7l = color(255, 180, 255);
 PFont titleFont;
 PFont dataFont;
 
+// store hover time (in milliseconds)
+float hoverTime;
+float hoverWaitTime = 350;
+boolean hoverTimeSet = false;
+
 // initial setup
 void setup(){
   size(w, h, P2D);
@@ -279,8 +284,16 @@ void draw(){
   line(graphX - 10, graphY + graphH, graphX, graphY + graphH);
   
   // hover over items
-  if(pmouseX == mouseX && pmouseY == mouseY)
-    onHover();
+  if(pmouseX == mouseX && pmouseY == mouseY){
+    if(!hoverTimeSet){
+      hoverTime = millis();
+      hoverTimeSet = true;
+    }
+    if(millis() - hoverTime > hoverWaitTime)
+      onHover();
+  }else{
+    hoverTimeSet = false;
+  }
 }
 
 // on hover over items
@@ -340,11 +353,16 @@ void onHover(){
 // overlay text at cursor (tooltip)
 void overlayText(int value, int x, int y){
   textFont(dataFont);
-  textAlign(RIGHT, CENTER);
+  textAlign(CENTER, CENTER);
   textSize(12);
-  fill(0);
+  fill(235, 235, 235, 175);
+  noStroke();
+  rectMode(CENTER);
+  rect(x - 15, y + 2, 30, 15);
+  rectMode(CORNER);
   stroke(255);
-  text(value, x - 5, y);
+  fill(0);
+  text(value, x - 15, y);
 }
 
 // when selecting items
