@@ -6,8 +6,8 @@
 // 
 
 // data file
-String dataFile = "titanic.csv";
-String fileLocation = "";
+String dataFile = "Titanic.csv";
+String fileLocation = "data/";
 String oddData = "first-class";
 
 // raw data variables
