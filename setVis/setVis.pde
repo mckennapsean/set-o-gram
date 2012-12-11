@@ -355,7 +355,7 @@ void overlayText(int value, int x, int y){
   textFont(dataFont);
   textAlign(CENTER, CENTER);
   textSize(12);
-  fill(235, 235, 235, 175);
+  fill(255, 255, 255, 175);
   noStroke();
   rectMode(CENTER);
   rect(x - 15, y + 2, 30, 15);
