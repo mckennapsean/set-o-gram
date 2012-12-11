@@ -4,9 +4,6 @@
 // original paper:
 //   Interactive Visual Analysis of Set-Typed Data
 // 
-// known bugs:
-//   need to clean and anonymize gene data before adding
-// 
 
 // data file
 String dataFile = "titanic.csv";
