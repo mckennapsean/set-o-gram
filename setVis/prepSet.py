@@ -2,7 +2,7 @@
 # convert set data file
 
 # defines the CSV data filenames
-inFile = "Labor-Supply.csv"
+inFile = "Penn-World-Table.csv"
 outFile = "out.csv"
 
 # necessary imports
@@ -23,7 +23,8 @@ writer = csv.writer(output)
 # initialize lists
 #colNames = ['', 'survived', 'adult', 'male', 'first-class']
 #colNames = ['', 'A', 'B', 'C', 'D', 'E', 'F' , 'G']
-colNames= ['', '>40hrs/week', '>$14/hr', 'no kids', 'age <40yrs', 'not disabled', 'after 1983']
+#colNames = ['', '>40hrs/week', '>$14/hr', 'no kids', 'age <40yrs', 'not disabled', 'after 1983']
+colNames = ['', 'OPEC', 'Communism', 'large population', 'large GDP/capita'] 
 rows = []
 i = 0
 
@@ -35,46 +36,72 @@ for row in reader:
   i += 1
   
   # skip column names in file
-  if i > 1:
+  if i > 1 and int(row[1]) == 1985:
     
     # add row number
-    newRow.append(str(i))
+    #newRow.append(str(i))
+    newRow.append(row[2])
     
-    # add if >40 hrs / week
-    if float(row[1]) > 7.640:
+    # add if OPEC
+    if row[3] == "yes":
       newRow.append(1)
     else:
       newRow.append(0)
     
-    # add if >$14/hr
-    if float(row[2]) > 2.639:
+    # add if Communism
+    if row[4] == "yes":
       newRow.append(1)
     else:
       newRow.append(0)
     
-    # add if no kids
-    if int(row[3]) == 0:
+    # add if large population
+    if int(row[5]) > 30000:
       newRow.append(1)
     else:
       newRow.append(0)
     
-    # add if under 40
-    if int(row[4]) < 40:
+    # add if large gdp/capita
+    if int(row[6]) > 3400:
       newRow.append(1)
     else:
       newRow.append(0)
-    
-    # add if not disabled
-    if int(row[5]) == 0:
-      newRow.append(1)
-    else:
-      newRow.append(0)
-    
-    # add if after 1983
-    if int(row[7]) > 1983:
-      newRow.append(1)
-    else:
-      newRow.append(0)
+
+# labor supply data transformation    
+#    # add if >40 hrs / week
+#    if float(row[1]) > 7.640:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
+#    
+#    # add if >$14/hr
+#    if float(row[2]) > 2.639:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
+#    
+#    # add if no kids
+#    if int(row[3]) == 0:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
+#    
+#    # add if under 40
+#    if int(row[4]) < 40:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
+#    
+#    # add if not disabled
+#    if int(row[5]) == 0:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
+#    
+#    # add if after 1983
+#    if int(row[7]) > 1983:
+#      newRow.append(1)
+#    else:
+#      newRow.append(0)
     
 # gene data transformation    
 #    # add in raw data to row
