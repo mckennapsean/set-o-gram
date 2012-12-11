@@ -5,7 +5,6 @@
 //   Interactive Visual Analysis of Set-Typed Data
 // 
 // known bugs:
-//   problem with the "class" set in titanic dataset, clicking the set has problems
 //   need to clean titanic data for better set labels
 //   need to clean and anonymize gene data before adding
 // 
@@ -162,9 +161,13 @@ void setup(){
         if(j == 0)
           for(int l = 0; l < setCount; l++)
             setFreqOverlap[i][l][k] = 0;
-        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class"))
+        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class") && !sets[i].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class"))
+        else if(setMembership[j][k] > 0 && setMembership[j][i] < 2 && freq > 0 && !sets[k].equals("class") && sets[i].equals("class"))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][k] < 2 && setMembership[j][i] > 0 && freq > 0 && sets[k].equals("class") && !sets[i].equals("class"))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class") && sets[i].equals("class"))
           setFreqOverlap[i][freq - 1][k] += 1;
       }
     }
