@@ -2,7 +2,7 @@
 # convert set data file
 
 # defines the CSV data filenames
-inFile = "genes.csv"
+inFile = "Labor-Supply.csv"
 outFile = "out.csv"
 
 # necessary imports
@@ -22,7 +22,8 @@ writer = csv.writer(output)
 
 # initialize lists
 #colNames = ['', 'survived', 'adult', 'male', 'first-class']
-colNames = ['', 'A', 'B', 'C', 'D', 'E', 'F' , 'G']
+#colNames = ['', 'A', 'B', 'C', 'D', 'E', 'F' , 'G']
+colNames= ['', '>40hrs/week', '>$14/hr', 'no kids', 'age <40yrs', 'not disabled', 'after 1983']
 rows = []
 i = 0
 
@@ -39,14 +40,51 @@ for row in reader:
     # add row number
     newRow.append(str(i))
     
-    # add in raw data to row
-    newRow.append(row[1])
-    newRow.append(row[2])
-    newRow.append(row[3])
-    newRow.append(row[4])
-    newRow.append(row[5])
-    newRow.append(row[6])
-    newRow.append(row[7])
+    # add if >40 hrs / week
+    if float(row[1]) > 7.640:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+    # add if >$14/hr
+    if float(row[2]) > 2.639:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+    # add if no kids
+    if int(row[3]) == 0:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+    # add if under 40
+    if int(row[4]) < 40:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+    # add if not disabled
+    if int(row[5]) == 0:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+    # add if after 1983
+    if int(row[7]) > 1983:
+      newRow.append(1)
+    else:
+      newRow.append(0)
+    
+# gene data transformation    
+#    # add in raw data to row
+#    newRow.append(row[1])
+#    newRow.append(row[2])
+#    newRow.append(row[3])
+#    newRow.append(row[4])
+#    newRow.append(row[5])
+#    newRow.append(row[6])
+#    newRow.append(row[7])
   
 # titanic data transformation  
 #  # add if survived
