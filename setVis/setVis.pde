@@ -5,13 +5,13 @@
 //   Interactive Visual Analysis of Set-Typed Data
 // 
 // known bugs:
-//   need to clean titanic data for better set labels
 //   need to clean and anonymize gene data before adding
 // 
 
 // data file
 String dataFile = "titanic.csv";
 String fileLocation = "";
+String oddData = "first-class";
 
 // raw data variables
 String[] sets;
@@ -121,9 +121,9 @@ void setup(){
     for(int j = 0; j < setCount; j++){
       if(i == 0)
         setCounts[j] = 0;
-      if(setMembership[i][j] > 0 && !sets[j].equals("class"))
+      if(setMembership[i][j] > 0 && !sets[j].equals(oddData))
         setCounts[j] += 1;
-      else if(setMembership[i][j] < 2 && sets[j].equals("class"))
+      else if(setMembership[i][j] < 2 && sets[j].equals(oddData))
         setCounts[j] += 1;
       if(i == memberCount - 1)
         if(setCounts[j] > barMax)
@@ -146,28 +146,28 @@ void setup(){
         // set initial frequency count to zero
         if(j == 0)
           setFreq[i][k] = 0;
-        if(setMembership[j][k] > 0 && !sets[k].equals("class"))
+        if(setMembership[j][k] > 0 && !sets[k].equals(oddData))
           freq += 1;
-        else if(setMembership[j][k] < 2 && sets[k].equals("class"))
+        else if(setMembership[j][k] < 2 && sets[k].equals(oddData))
           freq += 1;
       }
       // add to frequency count
-      if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals("class"))
+      if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals(oddData))
         setFreq[i][freq - 1] += 1;
-      else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals("class"))
+      else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals(oddData))
         setFreq[i][freq - 1] += 1;
       // associate this count to a specific set
       for(int k = 0; k < setCount; k++){
         if(j == 0)
           for(int l = 0; l < setCount; l++)
             setFreqOverlap[i][l][k] = 0;
-        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals("class") && !sets[i].equals("class"))
+        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals(oddData) && !sets[i].equals(oddData))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] > 0 && setMembership[j][i] < 2 && freq > 0 && !sets[k].equals("class") && sets[i].equals("class"))
+        else if(setMembership[j][k] > 0 && setMembership[j][i] < 2 && freq > 0 && !sets[k].equals(oddData) && sets[i].equals(oddData))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] > 0 && freq > 0 && sets[k].equals("class") && !sets[i].equals("class"))
+        else if(setMembership[j][k] < 2 && setMembership[j][i] > 0 && freq > 0 && sets[k].equals(oddData) && !sets[i].equals(oddData))
           setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals("class") && sets[i].equals("class"))
+        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals(oddData) && sets[i].equals(oddData))
           setFreqOverlap[i][freq - 1][k] += 1;
       }
     }
