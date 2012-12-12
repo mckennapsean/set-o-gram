@@ -6,7 +6,9 @@
 // 
 
 // data file
-String dataFile = "Titanic.csv";
+int data = 0;
+String[] fileNames = {"Titanic", "Titanic Alternative", "Penn World Table", "Labor Supply", "Genes"};
+String extension = ".csv";
 String fileLocation = "data/";
 String oddData = "first-class";
 
@@ -38,7 +40,7 @@ int graphH = h - graphY * 2;
 int barS = 25;
 int barW;
 int barY = graphY + graphH;
-int barMax = 0;
+int barMax;
 int barMaxRelative;
 
 // whether to display bars in relative mode
@@ -78,97 +80,7 @@ boolean hoverTimeSet = false;
 void setup(){
   size(w, h, P2D);
   
-  // read in data
-  String[] lines = loadStrings(fileLocation + dataFile);
-  
-  // for each line, parse through and store the raw, cleaned data
-  memberCount = lines.length - 1;
-  members = new String[memberCount];
-  for(int i = 0; i < lines.length; i++){
-    String[] pieces = split(lines[i], ",");
-    
-    // for header row
-    if(i == 0){
-      setCount = pieces.length - 1;
-      sets = new String[setCount];
-      setCounts = new int[setCount];
-      setMembership = new int[memberCount][setCount];
-      for(int j = 0; j < pieces.length; j++){
-        if(j != 0){
-          pieces[j] = split(pieces[j], "\"")[1];
-          sets[j - 1] = pieces[j];
-        }
-      }
-    
-    // for non-header row
-    }else{
-      pieces[0] = trim(split(pieces[0], "\"")[1]);
-      members[i - 1] = pieces[0];
-      for(int j = 0; j < pieces.length; j++)
-        if(j != 0)
-          setMembership[i - 1][j - 1] = int(pieces[j]);
-    }
-  }
-  
-  // set bar width
-  barW = (graphW - (barS * (setCount + 1))) / setCount;
-  
-  // count the total number of elements in each set, store max
-  for(int i = 0; i < memberCount; i++){
-    for(int j = 0; j < setCount; j++){
-      if(i == 0)
-        setCounts[j] = 0;
-      if(setMembership[i][j] > 0 && !sets[j].equals(oddData))
-        setCounts[j] += 1;
-      else if(setMembership[i][j] < 2 && sets[j].equals(oddData))
-        setCounts[j] += 1;
-      if(i == memberCount - 1)
-        if(setCounts[j] > barMax)
-          barMax = setCounts[j];
-    }
-  }
-  
-  // determine frequency counts among sets
-  setFreq = new int[setCount][setCount];
-  setFreqOverlap = new int[setCount][setCount][setCount];
-  selected = new boolean[setCount][setCount];
-  for(int i = 0; i < setCount; i++){
-    // store frequency count
-    for(int j = 0; j < memberCount; j++){
-      // determine frequency
-      int freq = 0;
-      for(int k = 0; k < setCount; k++){
-        // create initial selection
-        selected[i][k] = false;
-        // set initial frequency count to zero
-        if(j == 0)
-          setFreq[i][k] = 0;
-        if(setMembership[j][k] > 0 && !sets[k].equals(oddData))
-          freq += 1;
-        else if(setMembership[j][k] < 2 && sets[k].equals(oddData))
-          freq += 1;
-      }
-      // add to frequency count
-      if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals(oddData))
-        setFreq[i][freq - 1] += 1;
-      else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals(oddData))
-        setFreq[i][freq - 1] += 1;
-      // associate this count to a specific set
-      for(int k = 0; k < setCount; k++){
-        if(j == 0)
-          for(int l = 0; l < setCount; l++)
-            setFreqOverlap[i][l][k] = 0;
-        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals(oddData) && !sets[i].equals(oddData))
-          setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] > 0 && setMembership[j][i] < 2 && freq > 0 && !sets[k].equals(oddData) && sets[i].equals(oddData))
-          setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] > 0 && freq > 0 && sets[k].equals(oddData) && !sets[i].equals(oddData))
-          setFreqOverlap[i][freq - 1][k] += 1;
-        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals(oddData) && sets[i].equals(oddData))
-          setFreqOverlap[i][freq - 1][k] += 1;
-      }
-    }
-  }
+  processData();
   
   // set up color storage
   colors = new color[8];
@@ -189,7 +101,6 @@ void setup(){
   colorsl[5] = c6l;
   colorsl[6] = c7l;
   colorsl[7] = c0l;
-  setColors = new color[setCount][setCount];
   
   // set fonts
   titleFont = createFont("Verdana", 20);
@@ -252,7 +163,7 @@ void draw(){
   // draw titles
   textFont(titleFont);
   textAlign(CENTER);
-  String title = split(dataFile, ".")[0];
+  String title = fileNames[data];
   text(title, w / 2, graphY - 50);
   textSize(12);
   String yAxisTitle = "members";
@@ -413,15 +324,126 @@ void mouseClicked(){
       else
         relative = true;
     }
+  
+  // selecting to change the current data set
+  }else if(mouseY < (graphY - 30) && mouseX > (w / 4) && mouseX < (w - w / 4)){
+    data = (data + 1) % fileNames.length;
+    processData();
   }
 }
 
-// when toggling the relative mode on or off
+// shortcuts / key commands
 void keyTyped(){
+  // 'r' or 'R' to toggle relative mode on or off
   if(int(key) == 114 || int(key) == 82){
     if(relative)
       relative = false;
     else
       relative = true;
   }
+  
+  // 'd' or 'D' to toggle between datasets
+  if(int(key) == 100 || int(key) == 68){
+    data = (data + 1) % fileNames.length;
+    processData();
+  }
+}
+
+// when importing and processing data into data storage variables
+void processData(){
+  // read in data
+  String[] lines = loadStrings(fileLocation + fileNames[data] + extension);
+  
+  // for each line, parse through and store the raw, cleaned data
+  memberCount = lines.length - 1;
+  members = new String[memberCount];
+  for(int i = 0; i < lines.length; i++){
+    String[] pieces = split(lines[i], ",");
+    
+    // for header row
+    if(i == 0){
+      setCount = pieces.length - 1;
+      sets = new String[setCount];
+      setCounts = new int[setCount];
+      setMembership = new int[memberCount][setCount];
+      for(int j = 0; j < pieces.length; j++){
+        if(j != 0){
+          pieces[j] = split(pieces[j], "\"")[1];
+          sets[j - 1] = pieces[j];
+        }
+      }
+    
+    // for non-header row
+    }else{
+      pieces[0] = trim(split(pieces[0], "\"")[1]);
+      members[i - 1] = pieces[0];
+      for(int j = 0; j < pieces.length; j++)
+        if(j != 0)
+          setMembership[i - 1][j - 1] = int(pieces[j]);
+    }
+  }
+  
+  // set bar width
+  barW = (graphW - (barS * (setCount + 1))) / setCount;
+  
+  // count the total number of elements in each set, store max
+  barMax = 0;
+  for(int i = 0; i < memberCount; i++){
+    for(int j = 0; j < setCount; j++){
+      if(i == 0)
+        setCounts[j] = 0;
+      if(setMembership[i][j] > 0 && !sets[j].equals(oddData))
+        setCounts[j] += 1;
+      else if(setMembership[i][j] < 2 && sets[j].equals(oddData))
+        setCounts[j] += 1;
+      if(i == memberCount - 1)
+        if(setCounts[j] > barMax)
+          barMax = setCounts[j];
+    }
+  }
+  
+  // determine frequency counts among sets
+  setFreq = new int[setCount][setCount];
+  setFreqOverlap = new int[setCount][setCount][setCount];
+  selected = new boolean[setCount][setCount];
+  for(int i = 0; i < setCount; i++){
+    // store frequency count
+    for(int j = 0; j < memberCount; j++){
+      // determine frequency
+      int freq = 0;
+      for(int k = 0; k < setCount; k++){
+        // create initial selection
+        selected[i][k] = false;
+        // set initial frequency count to zero
+        if(j == 0)
+          setFreq[i][k] = 0;
+        if(setMembership[j][k] > 0 && !sets[k].equals(oddData))
+          freq += 1;
+        else if(setMembership[j][k] < 2 && sets[k].equals(oddData))
+          freq += 1;
+      }
+      // add to frequency count
+      if(setMembership[j][i] > 0 && freq > 0 && !sets[i].equals(oddData))
+        setFreq[i][freq - 1] += 1;
+      else if(setMembership[j][i] < 2 && freq > 0 && sets[i].equals(oddData))
+        setFreq[i][freq - 1] += 1;
+      // associate this count to a specific set
+      for(int k = 0; k < setCount; k++){
+        if(j == 0)
+          for(int l = 0; l < setCount; l++)
+            setFreqOverlap[i][l][k] = 0;
+        if(setMembership[j][k] > 0 && setMembership[j][i] > 0 && freq > 0 && !sets[k].equals(oddData) && !sets[i].equals(oddData))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][k] > 0 && setMembership[j][i] < 2 && freq > 0 && !sets[k].equals(oddData) && sets[i].equals(oddData))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][k] < 2 && setMembership[j][i] > 0 && freq > 0 && sets[k].equals(oddData) && !sets[i].equals(oddData))
+          setFreqOverlap[i][freq - 1][k] += 1;
+        else if(setMembership[j][k] < 2 && setMembership[j][i] < 2 && freq > 0 && sets[k].equals(oddData) && sets[i].equals(oddData))
+          setFreqOverlap[i][freq - 1][k] += 1;
+      }
+    }
+  }
+  
+  // set up color storage
+  setColors = new color[setCount][setCount];
 }
