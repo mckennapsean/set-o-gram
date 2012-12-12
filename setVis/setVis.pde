@@ -330,7 +330,7 @@ void mouseClicked(){
     if(mouseButton == LEFT)
       data = (data + 1) % fileNames.length;
     else if(mouseButton == RIGHT)
-      data = (data - 1) % fileNames.length;
+      data = (data + (fileNames.length - 1)) % fileNames.length;
     processData();
   }
 }
