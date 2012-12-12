@@ -327,7 +327,10 @@ void mouseClicked(){
   
   // selecting to change the current data set
   }else if(mouseY < (graphY - 30) && mouseX > (w / 4) && mouseX < (w - w / 4)){
-    data = (data + 1) % fileNames.length;
+    if(mouseButton == LEFT)
+      data = (data + 1) % fileNames.length;
+    else if(mouseButton == RIGHT)
+      data = (data - 1) % fileNames.length;
     processData();
   }
 }
