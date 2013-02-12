@@ -81,7 +81,7 @@ One confounding factor for this visualization method is how to read the blocks. 
 
 Below is an image of some data from a collaborator that was randomized to protect their data, but it shows how this tool could apply to real-world set-typed data. It definitely has potential in being a simple, but informative, interactive legend.
 
-![set'o'gram for a collaborator's gene data, anonymized](/images/gene-data-0.png)
+![set'o'gram for a collaborator's gene data, anonymized](/images/genes-data-0.png)
 
 
 Extensions
