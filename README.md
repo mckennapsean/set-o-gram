@@ -95,7 +95,7 @@ Compiling & Running Code
 
 download the [Processing v.2.0 IDE](http://processing.org/) 
 
-just open this repository in the IDE to run [*setVis.pde*](/setVis.pde)
+just open this repository in the IDE to run [*setVis/setVis.pde*](/setVis/setVis.pde)
 
 a [Python script](/script/prepSet.py) is provided as an example of converting a dataset to set-typed data
 
