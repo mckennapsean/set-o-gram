@@ -93,7 +93,7 @@ Given more time, it would have been nice to fix the few visual artifacts present
 Compiling & Running Code
 ------------------------
 
-download the [Processing v.2.0 IDE](http://processing.org/) 
+download the [Processing IDE](http://processing.org/) 
 
 just open this repository in the IDE to run [*setVis/setVis.pde*](/setVis/setVis.pde)
 

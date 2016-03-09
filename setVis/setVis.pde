@@ -89,7 +89,7 @@ boolean hoverTimeSet = false;
 
 // initial setup
 void setup(){
-  size(w, h, P2D);
+  size(800, 400, P2D);
   
   processData();
   
